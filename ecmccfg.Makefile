@@ -25,9 +25,11 @@ EXCLUDE_ARCHS += linux-corei7-poky
 # Since this file (ecmccfg.Makefile) is copied into
 # the module directory at build-time, these paths have to be relative
 # to that path
-APP := ecmccfgApp
-APPDB := $(APP)/Db
+APP := .
+APPDB := $(APP)/db
 APPSRC := $(APP)/src
+
+ECMC_SUBDIRS = scripts general hardware motion naming
 
 # If you have files to include, you will generally want to include these, e.g.
 #
@@ -39,8 +41,13 @@ APPSRC := $(APP)/src
 TEMPLATES += $(wildcard $(APPDB)/*.db)
 TEMPLATES += $(wildcard $(APPDB)/*.proto)
 TEMPLATES += $(wildcard $(APPDB)/*.template)
+TEMPLATES += $(wildcard $(APP)/protocol/*.proto)
+TEMPLATES += $(foreach path, $(ECMC_HW_TYPES), $(wildcard $(APPDB)/$(path)/*.db) $(wildcard $(APPDB)/$(path)/*.template) $(wildcard $(APPDB)/$(path)/*.substitutions))
 
+SCRIPTS += $(foreach path, $(ECMC_SUBDIRS), $(wildcard $(APP)/$(path)/*.cmd) $(wildcard $(APP)/$(path)/*/*.cmd) $(wildcard $(APP)/$(path)/*/*/*.cmd))
 SCRIPTS += $(wildcard ../iocsh/*.iocsh)
+SCRIPTS += $(wildcard $(APP)/scripts/jinja2/*.*)
+
 
 # Note that architecture-specific source files can be specified:
 #
@@ -51,6 +58,9 @@ SCRIPTS += $(wildcard ../iocsh/*.iocsh)
 #     CFLAGS CXXFLAGS CPPFLAGS
 # i.e.
 #     USR_CFLAGS_linux-ppc64e6500 += ...
+
+SOURCES += $(wildcard ./src/*.cpp)
+DBDS    += $(wildcard ./dbd/*.dbd)
 
 # Same as with any source or header files, you can also use $SUBS and $TMPS to define
 # database files to be inflated (using MSI), e.g.
