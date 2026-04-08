@@ -1,0 +1,3 @@
+[submodule "ecmccfg"]
+	path = ecmccfg
+	url = https://github.com/paulscherrerinstitute/ecmccfg.git
